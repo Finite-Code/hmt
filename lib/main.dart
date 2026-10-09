@@ -47,7 +47,24 @@ class DashboardScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF2F4F8),
       body: Stack(
         children: [
-          Positioned.fill(child: CustomPaint(painter: MetroMapBgPainter())),
+          Positioned.fill(
+            child: InteractiveViewer(
+              // Controls how far one can pan.
+              // A huge boundary will let them drag way off screen. So we aovid that
+              boundaryMargin: const EdgeInsets.all(500),
+
+              // setting 1 will DISABLE pan and zoom with locked scaling
+              minScale: 0.5,
+              maxScale: 3.0,
+
+              child: SizedBox(
+                // decent size ig
+                width: 2000,
+                height: 2000,
+                child: CustomPaint(painter: MetroMapBgPainter()),
+              ),
+            ),
+          ),
           Positioned(
             top: 0,
             left: 0,
