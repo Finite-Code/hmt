@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'deathboard.dart'; // the leaderboard screen yk
+
 void main() => runApp(
   const MaterialApp(debugShowCheckedModeBanner: false, home: GlitchDash()),
 );
@@ -126,7 +128,14 @@ class _GlitchDashState extends State<GlitchDash> {
 
                   // Action button
                   GestureDetector(
-                    onTap: () => setState(() => isDraft = !isDraft),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LeaderboardScreen(),
+                        ),
+                      );
+                    },
                     child: Container(
                       height: 60,
                       width: double.infinity,
