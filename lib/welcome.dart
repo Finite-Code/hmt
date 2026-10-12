@@ -11,7 +11,8 @@ class WelcomeScareScreen extends StatefulWidget {
 }
 
 class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
-  bool showSecondaryWarn = false; // the great glitchy bool you fool
+  // kinda glitchy bool
+  bool showSecondaryWarn = false;
 
   @override
   void initState() {
@@ -43,8 +44,7 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF030000),
-      // this is darker than the dash itself, which makes me wonder what out of two should be darker? or if even equal
+      backgroundColor: const Color(0xFF030000), // even darker than the dash
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -56,7 +56,7 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                 "UNAUTHORIZED_ACCESS",
                 style: TextStyle(
                   color: Color(0xFFFF003C),
-                  fontSize: 28,
+                  fontSize: 22,
                   fontFamily: 'monospace',
                   fontWeight: FontWeight.w900,
                   letterSpacing: -1,
@@ -76,7 +76,7 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
               ),
               const SizedBox(height: 16),
               const Text(
-                "Every second of your time will be scraped, aggregated, and matched against others. Your incompetency will be visible.\n\nBy continuing you consent Team Blackwell to exploit, store and modify any such metrics.",
+                "Every second of your time will be scraped, aggregated, and ranked against others. Your inefficiencies will be visible. Your downtime will be logged.\n\nTurn back if you care about your privacy.",
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14,
@@ -93,12 +93,10 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                   decoration: BoxDecoration(
                     color: Colors.red.withValues(alpha: 0.1),
                     border: Border.all(
-                      color: const Color(0xFFFF003C),
-                      width: 1.5,
-                    ),
+                        color: const Color(0xFFFF003C), width: 1.5),
                   ),
                   child: const Text(
-                    "WARNING: CONSTRUCT INJECTION DETECTED.\nTHE MONOGRAM MAY KILL THE CLIENT. ABORTING.",
+                    "WARNING: DATA INJECTION DETECTED.\nPROCEEDING WILL LOCK YOUR CLIENT.",
                     style: TextStyle(
                       color: Color(0xFFFF003C),
                       fontFamily: 'monospace',
@@ -108,21 +106,21 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                   ),
                 )
               else
-                const SizedBox(height: 60),
-              // keep layout stable before warn pops
+                const SizedBox(
+                    height: 60), // keep layout stable before warn pops
 
               const Spacer(),
 
               // the "leave" btn (safe)
               GestureDetector(
                 onTap: () {
+                  // just show a snackbar for now
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text(
-                        'Connection terminated. Stay safe sucker',
-                        style: TextStyle(fontFamily: 'monospace'),
-                      ),
-                    ), // TODO: just show a snackbar for now and uhh it looks ugly so fix it later
+                        content: Text('Connection terminated. Safe choice.',
+                            style: TextStyle(
+                                fontFamily:
+                                    'monospace'))), // TODO: just show a snackbar for now and uhh it looks ugly so fix it later
                   );
                 },
                 child: Container(
@@ -134,12 +132,11 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                   ),
                   child: const Center(
                     child: Text(
-                      "TERMINATE",
+                      "ABORT_CONNECTION",
                       style: TextStyle(
-                        color: Colors.white54,
-                        fontFamily: 'monospace',
-                        fontWeight: FontWeight.bold,
-                      ),
+                          color: Colors.white54,
+                          fontFamily: 'monospace',
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -155,28 +152,26 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                   if (!context.mounted) return;
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const GlitchDash()),
+                    MaterialPageRoute(
+                        builder: (context) => const GlitchDash()),
                   );
                 },
                 child: Container(
                   height: 60,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF110000),
-                    border: Border.all(
-                      color: const Color(0xFFFF003C),
-                      width: 2,
-                    ),
+                    color: const Color(0xFF110000), // dark red tint
+                    border:
+                        Border.all(color: const Color(0xFFFF003C), width: 2),
                   ),
                   child: const Center(
                     child: Text(
-                      "SIGN IN WITH 鏡 ニューラル",
-                      // TODO: Start the Oauth process and uhh maybe keep the japanese company name to make a lore out of it
+                      "I_ACCEPT_THE_RISK()",
                       style: TextStyle(
                         color: Color(0xFFFF003C),
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: 0.1,
+                        letterSpacing: 1.5,
                         fontFamily: 'monospace',
                       ),
                     ),
