@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'deathboard.dart'; // the leaderboard screen yk
+import 'package:hackedmytime/welcome.dart';
 
 void main() => runApp(
   const MaterialApp(debugShowCheckedModeBanner: false, home: GlitchDash()),
@@ -132,7 +131,7 @@ class _GlitchDashState extends State<GlitchDash> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LeaderboardScreen(),
+                          builder: (context) => const WelcomeScareScreen(),
                         ),
                       );
                     },
