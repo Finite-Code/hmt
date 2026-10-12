@@ -252,8 +252,8 @@ class GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.red.withValues(alpha: 0.05)
-      ..strokeWidth = 1.0;
+      ..color = Colors.white24
+      ..strokeWidth = 1;
 
     // draw the grid lines manually :)
     for (double i = 0; i < size.width; i += 30) {
