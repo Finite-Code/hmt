@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'main.dart'; // to route to the dash
 
@@ -15,12 +16,28 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
   @override
   void initState() {
     super.initState();
-    // delay the second warning to creep 'em out
+    // delay the second warning to creep 'em out TODO: Need an animation
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
         setState(() => showSecondaryWarn = true);
+        _triggerGlitchHaptic(); // <--- ZAP! xD
       }
     });
+  }
+
+  Future<void> _triggerGlitchHaptic() async {
+    HapticFeedback.heavyImpact();
+    await Future.delayed(const Duration(milliseconds: 20));
+
+    for (int i = 0; i < 5; i++) {
+      HapticFeedback.heavyImpact();
+      await Future.delayed(const Duration(milliseconds: 10));
+    }
+
+    await Future.delayed(const Duration(milliseconds: 40));
+    HapticFeedback.lightImpact();
+    await Future.delayed(const Duration(milliseconds: 20));
+    HapticFeedback.mediumImpact();
   }
 
   @override
@@ -130,9 +147,12 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
 
               const SizedBox(height: 16),
 
-              // the "enter" btn (supposed to be dangerous)
+              // the "enter" btn (dangerous)
               GestureDetector(
-                onTap: () {
+                onTap: () async {
+                  await _triggerGlitchHaptic(); // <--- Glitch before moving
+
+                  if (!context.mounted) return;
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const GlitchDash()),
