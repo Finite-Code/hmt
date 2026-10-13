@@ -18,6 +18,8 @@ A list below for personal tracking: <br>
 - [ ] Leaderboard Screen ![Progress](https://progress-bar.xyz/25/?style=neo-glass)
 - [ ] API Calling: ![Progress](https://progress-bar.xyz/10/?style=neo-glass) <br>
     - A test has been written
+- [ ] WelcomeScareScreen: ![Progress](https://progress-bar.xyz/70/?style=neo-glass) <br/>
+    - Almost there, but it needs Oauth (see below!)
 - [ ] Oauth: ![Progress](https://progress-bar.xyz/60/?style=neo-glass)
 
 ## Possible Features
