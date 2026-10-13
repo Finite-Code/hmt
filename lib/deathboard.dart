@@ -31,7 +31,6 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Row(

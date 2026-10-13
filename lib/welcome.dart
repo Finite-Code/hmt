@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'main.dart'; // to route to the dash
+import 'auth_config.dart';
+import 'pkce.dart';
 
 class WelcomeScareScreen extends StatefulWidget {
   const WelcomeScareScreen({super.key});
@@ -23,6 +25,34 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
         _triggerGlitchHaptic(); // <--- ZAP!
       }
     });
+  }
+
+  String? _activeCodeVerifier;
+
+  Future<void> _startOAuthFlow() async {
+    await _triggerGlitchHaptic();
+
+    final verifier = PkceHelper.generateCodeVerifier();
+    final challenge = PkceHelper.generateCodeChallenge(verifier);
+
+    _activeCodeVerifier = verifier; // Keep in memory temp
+
+    final loginUrl = OAuthConfig.getLoginUrl(codeChallenge: challenge);
+    final uri = Uri.parse(loginUrl);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'ERR: FAILED TO CONNECT',
+            style: TextStyle(fontFamily: 'monospace'),
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _triggerGlitchHaptic() async {
@@ -149,16 +179,7 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
 
               // the "enter" btn (supposed to be dangerous)
               GestureDetector(
-                onTap: () async {
-                  await _triggerGlitchHaptic(); // <--- Glitch before moving
-
-                  if (!context.mounted) return;
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const GlitchDash()),
-                  );
-                },
+                onTap: _startOAuthFlow,
                 child: Container(
                   height: 60,
                   width: double.infinity,
@@ -172,7 +193,6 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                   child: const Center(
                     child: Text(
                       "SIGN IN WITH 鏡 ニューラル",
-                      // TODO: Start the Oauth process and uhh maybe keep the japanese company name to make a lore out of it
                       style: TextStyle(
                         color: Color(0xFFFF003C),
                         fontSize: 18,
