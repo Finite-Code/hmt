@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hackedmytime/auth_service.dart';
 import 'package:hackedmytime/deathboard.dart';
+import 'package:hackedmytime/welcome.dart';
 
-void main() => runApp(
-  const MaterialApp(debugShowCheckedModeBanner: false, home: GlitchDash()),
-);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // don't render anything if not logged in!
+  final bool loggedIn = await TokenStorage.isLoggedIn();
+
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      // If logged in go to dashboard or login first xD
+      home: loggedIn ? const GlitchDash() : const WelcomeScareScreen(),
+    ),
+  );
+}
 
 class GlitchDash extends StatefulWidget {
   const GlitchDash({super.key});
