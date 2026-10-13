@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 
-class LeaderboardScreen extends StatelessWidget {
+class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
 
   @override
+  State<LeaderboardScreen> createState() => _LeaderboardScreenState();
+}
+
+class _LeaderboardScreenState extends State<LeaderboardScreen> {
+  String selectedFilter = "GLOBAL";
+
+  @override
   Widget build(BuildContext context) {
-    // dummy leaderboard data, assuming index is rank
     final List<Map<String, String>> hackers = [
       {"name": "0xATHARVA", "time": "35h 67m", "lang": "RUST"},
       {"name": "GHOST_SEC", "time": "29h 14m", "lang": "C"},
@@ -14,6 +20,10 @@ class LeaderboardScreen extends StatelessWidget {
       {"name": "SYN_ACK", "time": "12h 10m", "lang": "PYTHON"},
       {"name": "SYS_ADMIN", "time": "08h 55m", "lang": "BASH"},
     ];
+
+    final filtered = selectedFilter == "RUST"
+        ? hackers.where((h) => h['lang'] == 'RUST').toList()
+        : hackers;
 
     return Scaffold(
       backgroundColor: const Color(0xFF050000),
@@ -55,6 +65,47 @@ class LeaderboardScreen extends StatelessWidget {
                 ],
               ),
             ),
+
+            // Category Filter Chips
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                children: ["CHIP1", "CHIP2", "IM_CRINE_CHIP_3"].map((tag) {
+                  final active = selectedFilter == tag;
+                  return GestureDetector(
+                    onTap: () => setState(() => selectedFilter = tag),
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: active
+                            ? const Color(0xFFFF003C)
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: active
+                              ? const Color(0xFFFF003C)
+                              : Colors.white24,
+                        ),
+                      ),
+                      child: Text(
+                        tag,
+                        style: TextStyle(
+                          color: active ? Colors.black : Colors.white70,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+
+            const SizedBox(height: 8),
 
             // List Header
             Padding(
@@ -115,10 +166,10 @@ class LeaderboardScreen extends StatelessWidget {
                   horizontal: 20.0,
                   vertical: 8.0,
                 ),
-                itemCount: hackers.length,
+                itemCount: filtered.length,
                 itemBuilder: (context, index) {
-                  final hacker = hackers[index];
-                  final isMe = index == 0; // assuming top spot is user for now
+                  final hacker = filtered[index];
+                  final isMe = hacker['name'] == '0xATHARVA';
 
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),

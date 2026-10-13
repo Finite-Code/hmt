@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hackedmytime/welcome.dart';
+import 'package:hackedmytime/deathboard.dart';
 
 void main() => runApp(
   const MaterialApp(debugShowCheckedModeBanner: false, home: GlitchDash()),
@@ -73,7 +73,6 @@ class _GlitchDashState extends State<GlitchDash> {
 
                   const SizedBox(height: 40),
 
-                  // status area
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -125,13 +124,12 @@ class _GlitchDashState extends State<GlitchDash> {
 
                   const SizedBox(height: 40),
 
-                  // Action button
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const WelcomeScareScreen(),
+                          builder: (context) => const LeaderboardScreen(),
                         ),
                       );
                     },
