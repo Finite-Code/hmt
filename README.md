@@ -18,7 +18,7 @@ A list below for personal tracking: <br>
 - [ ] Leaderboard Screen ![Progress](https://progress-bar.xyz/25/?style=neo-glass)
 - [ ] API Calling: ![Progress](https://progress-bar.xyz/10/?style=neo-glass) <br>
     - A test has been written
-- [ ] Oauth: ![Progress](https://progress-bar.xyz/0/?style=neo-glass)
+- [ ] Oauth: ![Progress](https://progress-bar.xyz/60/?style=neo-glass)
 
 ## Possible Features
 
