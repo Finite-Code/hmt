@@ -17,7 +17,6 @@ class AuthService {
         body: {
           'grant_type': 'authorization_code',
           'client_id': OAuthConfig.clientId,
-          // NOTE: Client Secret NOT required
           'code': authorizationCode,
           'redirect_uri': OAuthConfig.redirectUri,
           'code_verifier': codeVerifier,
@@ -26,9 +25,8 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['access_token']; // Store this securely!!
+        return data['access_token'];
       } else {
-        // handle err
         return null;
       }
     } catch (e) {
@@ -39,14 +37,23 @@ class AuthService {
 
 class TokenStorage {
   static const String _tokenKey = 'hackatime_token';
+  static const String _verifierKey = 'hackatime_code_verifier';
 
-  // Save it
+  static Future<void> saveVerifier(String verifier) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_verifierKey, verifier);
+  }
+
+  static Future<String?> getVerifier() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_verifierKey);
+  }
+
   static Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tokenKey, token);
   }
 
-  // Retrieve for API calls
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_tokenKey);
@@ -57,9 +64,9 @@ class TokenStorage {
     return token != null && token.isNotEmpty;
   }
 
-  // Clear on logout
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
+    await prefs.remove(_verifierKey);
   }
 }

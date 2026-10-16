@@ -1,8 +1,13 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'auth_config.dart';
+import 'auth_service.dart';
+import 'main.dart';
 import 'pkce.dart';
 
 class WelcomeScareScreen extends StatefulWidget {
@@ -13,21 +18,72 @@ class WelcomeScareScreen extends StatefulWidget {
 }
 
 class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
-  bool showSecondaryWarn = false; // the great glitchy bool you fool
+  bool showSecondaryWarn = false; // the great glitchy bool
+  bool isExchangingToken = false;
+  StreamSubscription<Uri>? _linkSubscription;
 
   @override
   void initState() {
     super.initState();
-    // delay the second warning to creep 'em out
+
+    // Intercept callback when returning from browser
+    _initDeepLinks();
+
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
         setState(() => showSecondaryWarn = true);
-        _triggerGlitchHaptic(); // <--- ZAP!
+        _triggerGlitchHaptic();
       }
     });
   }
 
-  String? _activeCodeVerifier;
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _initDeepLinks() {
+    final appLinks = AppLinks();
+    _linkSubscription = appLinks.uriLinkStream.listen((uri) async {
+      if (uri.scheme == 'theyhackedmytime' && uri.host == 'oauth-callback-v1') {
+        final code = uri.queryParameters['code'];
+        if (code != null) {
+          setState(() => isExchangingToken = true);
+
+          final verifier = await TokenStorage.getVerifier();
+          if (verifier != null) {
+            final token = await AuthService.exchangeCodeForToken(
+              authorizationCode: code,
+              codeVerifier: verifier,
+            );
+
+            if (token != null) {
+              await TokenStorage.saveToken(token);
+              if (!mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const GlitchDash()),
+              );
+              return;
+            }
+          }
+
+          if (mounted) {
+            setState(() => isExchangingToken = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'ERR: OAUTH_EXCHANGE_FAILED',
+                  style: TextStyle(fontFamily: 'monospace'),
+                ),
+              ),
+            );
+          }
+        }
+      }
+    });
+  }
 
   Future<void> _startOAuthFlow() async {
     await _triggerGlitchHaptic();
@@ -35,7 +91,8 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
     final verifier = PkceHelper.generateCodeVerifier();
     final challenge = PkceHelper.generateCodeChallenge(verifier);
 
-    _activeCodeVerifier = verifier; // Keep in memory temp
+    // Save verifier to storage so it survives process restarts
+    await TokenStorage.saveVerifier(verifier);
 
     final loginUrl = OAuthConfig.getLoginUrl(codeChallenge: challenge);
     final uri = Uri.parse(loginUrl);
@@ -74,7 +131,6 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF030000),
-      // this is darker than the dash itself, which makes me wonder what out of two should be darker? or if even equal
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -127,9 +183,9 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                       width: 1.5,
                     ),
                   ),
-                  child: const Text(
-                    "WARNING: CONSTRUCT INJECTION DETECTED.\nTHE MONOGRAM MAY KILL THE CLIENT. ABORTING.",
-                    style: TextStyle(
+                  child: Text(
+                    isExchangingToken ? "NEURAL_LINK_EXCHANGING_TOKEN..." : "WARNING: CONSTRUCT INJECTION DETECTED.\nTHE MONOGRAM MAY KILL THE CLIENT. ABORTING.",
+                    style: const TextStyle(
                       color: Color(0xFFFF003C),
                       fontFamily: 'monospace',
                       fontWeight: FontWeight.bold,
@@ -139,11 +195,9 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                 )
               else
                 const SizedBox(height: 60),
-              // keep layout stable before warn pops
 
               const Spacer(),
 
-              // the "leave" btn (safe)
               GestureDetector(
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -152,7 +206,7 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                         'Connection terminated. Stay safe sucker',
                         style: TextStyle(fontFamily: 'monospace'),
                       ),
-                    ), // TODO: just show a snackbar for now and uhh it looks ugly so fix it later
+                    ),
                   );
                 },
                 child: Container(
@@ -177,9 +231,8 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
 
               const SizedBox(height: 16),
 
-              // the "enter" btn (supposed to be dangerous)
               GestureDetector(
-                onTap: _startOAuthFlow,
+                onTap: isExchangingToken ? null : _startOAuthFlow,
                 child: Container(
                   height: 60,
                   width: double.infinity,
@@ -190,10 +243,12 @@ class _WelcomeScareScreenState extends State<WelcomeScareScreen> {
                       width: 2,
                     ),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      "SIGN IN WITH 鏡 ニューラル",
-                      style: TextStyle(
+                      isExchangingToken
+                          ? "AUTHENTICATING..."
+                          : "SIGN IN WITH 鏡 ニューラル",
+                      style: const TextStyle(
                         color: Color(0xFFFF003C),
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
