@@ -75,7 +75,7 @@ class _GlitchDashState extends State<GlitchDash> {
                     ),
                   ),
                   const Text(
-                    "THIS_WEEK",
+                    "* THIS WEEK",
                     style: TextStyle(
                       color: Colors.white54,
                       fontSize: 14,
