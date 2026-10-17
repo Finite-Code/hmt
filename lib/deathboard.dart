@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'bcknd/web_clerk.dart';
+import 'time.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
@@ -8,11 +10,28 @@ class LeaderboardScreen extends StatefulWidget {
 }
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
+  List<dynamic> apiHackers = [];
   String selectedFilter = "GLOBAL";
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLeaderboard();
+  }
+
+  Future<void> _loadLeaderboard() async {
+    final list = await WebClerk.topHackers();
+    if (!mounted) return;
+    setState(() {
+      apiHackers = list;
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> hackers = [
+    final List<Map<String, String>> fallback = [
       {"name": "0xATHARVA", "time": "35h 67m", "lang": "RUST"},
       {"name": "GHOST_SEC", "time": "29h 14m", "lang": "C"},
       {"name": "NULL_PTR", "time": "24h 02m", "lang": "TS"},
@@ -21,9 +40,20 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       {"name": "SYS_ADMIN", "time": "08h 55m", "lang": "BASH"},
     ];
 
+    final displayList = apiHackers.isNotEmpty
+        ? apiHackers.map((e) {
+            final u = e['user'] ?? {};
+            return {
+              "name": (u['username'] ?? 'ANON').toString().toUpperCase(),
+              "time": formatSeconds(e['total_seconds']),
+              "lang": "RUST",
+            };
+          }).toList()
+        : fallback;
+
     final filtered = selectedFilter == "RUST"
-        ? hackers.where((h) => h['lang'] == 'RUST').toList()
-        : hackers;
+        ? displayList.where((h) => h['lang'] == 'RUST').toList()
+        : displayList;
 
     return Scaffold(
       backgroundColor: const Color(0xFF050000),
@@ -69,7 +99,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
-                children: ["CHIP1", "CHIP2", "IM_CRINE_CHIP_3"].map((tag) {
+                children: ["GLOBAL", "3AM_CLUB", "RUST"].map((tag) {
                   final active = selectedFilter == tag;
                   return GestureDetector(
                     onTap: () => setState(() => selectedFilter = tag),
