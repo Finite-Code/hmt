@@ -21,6 +21,7 @@ A list below for personal tracking: <br>
 - [ ] WelcomeScareScreen: ![Progress](https://progress-bar.xyz/70/?style=neo-glass) <br/>
     - Almost there, but it needs Oauth (see below!)
 - [x] Oauth: ![Progress](https://progress-bar.xyz/100/?style=neo-glass)
+- [ ] Settings: ![Progress](https://progress-bar.xyz/0/?style=neo-glass)
 
 ## Possible Features
 
