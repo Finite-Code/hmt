@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import 'auth_service.dart';
+import '../auth_service.dart';
 
 class WebClerk {
   static const apiBase = 'https://hackatime.hackclub.com';
