@@ -14,13 +14,13 @@ This project is a starting point for a Flutter application.
 A list below for personal tracking: <br>
 (Progress bars work on the basis of the fact that a 100 means ready for production)
 
-- [ ] Home/Main Screen ![Progress](https://progress-bar.xyz/33/?style=neo-glass)
-- [ ] Leaderboard Screen ![Progress](https://progress-bar.xyz/25/?style=neo-glass)
-- [ ] API Calling: ![Progress](https://progress-bar.xyz/10/?style=neo-glass) <br>
-    - A test has been written
+- [ ] Home/Main Screen ![Progress](https://progress-bar.xyz/50/?style=neo-glass)
+- [ ] Leaderboard Screen ![Progress](https://progress-bar.xyz/65/?style=neo-glass)
+- [ ] API Calling: ![Progress](https://progress-bar.xyz/50/?style=neo-glass) <br>
+    - The app now actively calls and uses the API
 - [ ] WelcomeScareScreen: ![Progress](https://progress-bar.xyz/70/?style=neo-glass) <br/>
     - Almost there, but it needs Oauth (see below!)
-- [ ] Oauth: ![Progress](https://progress-bar.xyz/60/?style=neo-glass)
+- [x] Oauth: ![Progress](https://progress-bar.xyz/100/?style=neo-glass)
 
 ## Possible Features
 
