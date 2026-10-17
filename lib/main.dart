@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hackedmytime/auth_service.dart';
+import 'package:hackedmytime/bcknd/web_clerk.dart';
 import 'package:hackedmytime/deathboard.dart';
+import 'package:hackedmytime/time.dart';
 import 'package:hackedmytime/welcome.dart';
 
 void main() async {
@@ -27,11 +29,56 @@ class GlitchDash extends StatefulWidget {
 
 class _GlitchDashState extends State<GlitchDash> {
   // hey babe does it make sense? F*(# NO!
-  final int totalSecs = 126720;
+  double? totalSecs;
+  String lastSeenText = "2m ago";
+  String activeFile = "src/main.rs";
+  String activeBranch = "git: HEAD";
+  List<dynamic> languages = [];
   bool isDraft = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadDashData();
+  }
+
+  Future<void> _loadDashData() async {
+    final hrs = await WebClerk.loggedHours();
+    final beat = await WebClerk.latestBeat();
+    final stats = await WebClerk.weeklyStats();
+
+    if (!mounted) return;
+    setState(() {
+      totalSecs = hrs;
+      if (beat.containsKey('time_ago')) {
+        lastSeenText = beat['time_ago'] ?? "2m ago";
+        final hb = beat['heartbeat'];
+        if (hb != null && hb['entity'] != null) {
+          activeFile = hb['entity'].toString().split('/').last;
+          activeBranch = "git: ${hb['branch'] ?? 'HEAD'}";
+        }
+      }
+      if (stats.containsKey('languages') && stats['languages'] != null) {
+        languages = stats['languages'] as List<dynamic>;
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final lang1 = languages.isNotEmpty
+        ? languages[0]['name'].toString().toUpperCase()
+        : "RUST";
+    final pct1 = languages.isNotEmpty
+        ? "${(languages[0]['percent'] ?? 43).round()}%"
+        : "43%";
+    final lang2 = languages.length > 1
+        ? languages[1]['name'].toString().toUpperCase()
+        : "TS";
+    final pct2 = languages.length > 1
+        ? "${(languages[1]['percent'] ?? 35).round()}%"
+        : "35%";
+
     return Scaffold(
       backgroundColor: const Color(0xFF050000), // cause it's 3AM?
       body: Stack(
@@ -63,9 +110,9 @@ class _GlitchDashState extends State<GlitchDash> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ).createShader(bounds),
-                    child: const Text(
-                      "35h 67m",
-                      style: TextStyle(
+                    child: Text(
+                      formatSeconds(totalSecs ?? 126720),
+                      style: const TextStyle(
                         fontSize: 64,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -3,
@@ -106,7 +153,7 @@ class _GlitchDashState extends State<GlitchDash> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          isDraft ? "STALE" : "2m ago",
+                          isDraft ? "STALE" : lastSeenText,
                           style: const TextStyle(
                             color: Colors.white,
                             fontFamily: 'monospace',
@@ -120,7 +167,7 @@ class _GlitchDashState extends State<GlitchDash> {
                   const SizedBox(height: 24),
 
                   // targets
-                  _buildTarget("src/main.rs", "git: HEAD"),
+                  _buildTarget(activeFile, activeBranch),
                   const SizedBox(height: 12),
                   _buildTarget("lib/core.dart", "git: WIP"),
 
@@ -129,9 +176,9 @@ class _GlitchDashState extends State<GlitchDash> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildStatBlock("LINES", "1,240"),
-                      _buildStatBlock("RUST", "43%"),
-                      _buildStatBlock("TS", "35%"),
+                      _buildStatBlock("LINES", "*@&#"),
+                      _buildStatBlock("RUST", "XY%"),
+                      _buildStatBlock("TS", "YX%"),
                     ],
                   ),
 
